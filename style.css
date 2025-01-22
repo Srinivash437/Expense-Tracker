@@ -1,0 +1,65 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+.container {
+  background-color: cadetblue;
+  overflow: auto;
+}
+.header h1 {
+  text-align: center;
+  padding: 10px;
+}
+.inputField label {
+  font-size: larger;
+  font-weight: bold;
+}
+input.form-control,
+select.form-select {
+  border: 2px solid black;
+  border-radius: 5px;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  background-color: #d9d9d9;
+}
+button.btn {
+  margin-bottom: 15px;
+}
+.transactionSummary h4 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+.transactionSummary p {
+  text-align: center;
+  font-size: larger;
+  font-weight: bold;
+}
+.transactionTable h4 {
+  text-align: center;
+  margin: 10px 0;
+  font-weight: bold;
+}
+.transactiontable {
+  margin-bottom: 20px !important;
+}
+.transactiontable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+thead,
+tbody {
+  background-color: #d9d9d9;
+  text-align: center;
+}
+thead th,
+tbody td {
+  border: 1px solid black;
+  text-align: center;
+  padding: 8px;
+}
+tbody tr:hover {
+  background-color: #e9ecef;
+}
