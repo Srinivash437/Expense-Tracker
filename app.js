@@ -6,7 +6,6 @@ const totalExpenseEl = document.getElementById("totalExpense");
 const netIncomeEl = document.getElementById("netIncome");
 const filterCategory = document.getElementById("filterCategory");
 
-// Initialize transactions array and load from local storage
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
 // Update the UI with the current data
@@ -32,6 +31,7 @@ function updateUI() {
       <td>${transaction.category}</td>
       <td>₹${transaction.amount}</td>
       <td>
+        <button class="btn btn-warning btn-sm" onclick="editTransaction(${index})">Edit</button>
         <button class="btn btn-danger btn-sm" onclick="deleteTransaction(${index})">Delete</button>
       </td>
     `;
@@ -39,9 +39,9 @@ function updateUI() {
   });
 
   // Update summary section
-  totalIncomeEl.textContent = totalIncome;
-  totalExpenseEl.textContent = totalExpense;
-  netIncomeEl.textContent = totalIncome - totalExpense;
+  totalIncomeEl.textContent = totalIncome.toFixed(2);
+  totalExpenseEl.textContent = totalExpense.toFixed(2);
+  netIncomeEl.textContent = (totalIncome - totalExpense).toFixed(2);
 
   // Save to local storage
   localStorage.setItem("transactions", JSON.stringify(transactions));
@@ -67,6 +67,61 @@ transactionForm.addEventListener("submit", (e) => {
   transactionForm.reset();
   updateUI();
 });
+
+// Edit a transaction
+function editTransaction(index) {
+  const transaction = transactions[index];
+
+  // Populate form fields with the current transaction details
+  document.getElementById("date").value = transaction.date;
+  document.getElementById("description").value = transaction.description;
+  document.getElementById("category").value = transaction.category;
+  document.getElementById("amount").value = transaction.amount;
+
+  // Remove the old transaction and update UI after editing
+  deleteTransaction(index);
+
+  // Scroll to the form for better user experience
+  transactionForm.scrollIntoView();
+
+  // Handle form resubmission with new data
+  transactionForm.addEventListener(
+    "submit",
+    function saveEdit(e) {
+      e.preventDefault();
+      const newDate = document.getElementById("date").value;
+      const newDescription = document.getElementById("description").value;
+      const newCategory = document.getElementById("category").value;
+      const newAmount = parseFloat(document.getElementById("amount").value);
+
+      if (
+        !newDate ||
+        !newDescription ||
+        !newCategory ||
+        isNaN(newAmount) ||
+        newAmount <= 0
+      ) {
+        alert("Please fill in all fields correctly.");
+        return;
+      }
+
+      const updatedTransaction = {
+        date: newDate,
+        description: newDescription,
+        category: newCategory,
+        amount: newAmount,
+      };
+
+      transactions.push(updatedTransaction);
+      transactionForm.reset();
+      updateUI();
+
+      // Remove the temporary event listener after saving
+      transactionForm.removeEventListener("submit", saveEdit);
+    },
+    { once: true }
+  );
+}
 
 // Delete a transaction
 function deleteTransaction(index) {
@@ -94,6 +149,7 @@ filterCategory.addEventListener("change", () => {
         <td>${transaction.category}</td>
         <td>₹${transaction.amount}</td>
         <td>
+          <button class="btn btn-warning btn-sm" onclick="editTransaction(${index})">Edit</button>
           <button class="btn btn-danger btn-sm" onclick="deleteTransaction(${index})">Delete</button>
         </td>
       `;
@@ -108,13 +164,9 @@ const resetButton = document.getElementById("resetPage");
 // Reset button functionality
 resetButton.addEventListener("click", () => {
   if (confirm("Are you sure you want to reset all data?")) {
+    transactions = [];
     localStorage.clear(); // Clear local storage
-    document.getElementById("transactionList").innerHTML = ""; // Clear transaction table
-    document.getElementById("totalIncome").textContent = "0";
-    document.getElementById("totalExpense").textContent = "0";
-    document.getElementById("netIncome").textContent = "0";
-    // Optionally refresh the page
-    location.reload();
+    updateUI(); // Update UI
   }
 });
 
